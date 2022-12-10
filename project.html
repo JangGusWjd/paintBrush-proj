@@ -1,0 +1,259 @@
+<!-- graphics project 기능 개선 및 추가한 그림판 - project.html
+과목: 컴퓨터 그래픽스
+분반: 1분반
+학번: 32203928
+학과: 소프트웨어학과
+이름: 장현정 -->
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graphics Project</title>
+    <style>
+      #container {
+        width: 100%;
+        height: 80vh;
+        display: flex;
+        font-weight: 800;
+        color: rgb(105, 105, 105);
+      }
+      #canvas {
+        border: 2px solid black;
+      }
+      .select-form {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        margin-left: 10px;
+        padding: 10px;
+        background: rgb(239, 239, 239);
+      }
+      select {
+        margin-bottom: 10%;
+      }
+      span {
+        font-weight: 800;
+        padding-bottom: 3px;
+        color: black;
+      }
+      #eraseBtn {
+        width: 100%;
+        height: 6%;
+        border: 0;
+        border-radius: 25px;
+        background: rgb(91, 173, 250);
+        color: white;
+        font-size: 15px;
+        font-weight: 800;
+        margin-top: 2vh;
+      }
+
+      #eraseBtn:hover {
+        background: white;
+        border: 3px solid rgb(91, 173, 250);
+        color: rgb(91, 173, 250);
+      }
+
+      .colorBtn,
+      .bgBtn {
+        width: 20%;
+        height: 3vh;
+        border: 0;
+      }
+      .colorBtn:focus,
+      .bgBtn:focus {
+        border: 2px solid black;
+      }
+    </style>
+  </head>
+  <script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec4 vColor;
+    varying vec4 fColor;
+
+    void main(){
+        gl_Position = vPosition;
+        fColor = vColor;
+        gl_PointSize = 4.0;
+    }
+  </script>
+
+  <script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec4 fColor;
+
+    void main(){
+      gl_FragColor = fColor;
+    }
+  </script>
+  <script src="./common/initShaders.js"></script>
+  <script src="./common/MV.js"></script>
+  <script src="./common/webgl-utils.js"></script>
+  <script src="project.js"></script>
+  <body>
+    <h1>< WebGL 그림판 ></h1>
+    <div id="container">
+      <div>
+        <canvas id="canvas" width="700" height="700"></canvas>
+      </div>
+      <div class="select-form">
+        <span>Color</span>
+        <div id="pallete">
+          <button
+            class="colorBtn"
+            value="0"
+            style="background-color: red"
+          ></button>
+          <button
+            class="colorBtn"
+            value="1"
+            style="background-color: orange"
+          ></button>
+          <button
+            class="colorBtn"
+            value="2"
+            style="background-color: yellow"
+          ></button>
+          <button
+            class="colorBtn"
+            value="3"
+            style="background-color: green"
+          ></button>
+          <button
+            class="colorBtn"
+            value="4"
+            style="background-color: blue"
+          ></button>
+          <button
+            class="colorBtn"
+            value="5"
+            style="background-color: magenta"
+          ></button>
+          <button
+            class="colorBtn"
+            value="6"
+            style="background-color: white"
+          ></button>
+          <button
+            class="colorBtn"
+            value="7"
+            style="background-color: black"
+          ></button>
+        </div>
+        <br />
+        <span>Background Color</span>
+        <div id="background">
+          <button
+            class="bgBtn"
+            value="0"
+            style="background-color: black"
+          ></button>
+          <button
+            class="bgBtn"
+            value="1"
+            style="background-color: grey"
+          ></button>
+          <button
+            class="bgBtn"
+            value="2"
+            style="background-color: white"
+          ></button>
+          <button
+            class="bgBtn"
+            value="3"
+            style="background-color: lightblue"
+          ></button>
+          <button
+            class="bgBtn"
+            value="4"
+            style="background-color: lightgoldenrodyellow"
+          ></button>
+          <button
+            class="bgBtn"
+            value="5"
+            style="background-color: lightpink"
+          ></button>
+          <button
+            class="bgBtn"
+            value="6"
+            style="background-color: lightgreen"
+          ></button>
+        </div>
+        <br />
+        <span>Line</span>
+        <hr style="width: 80%; border: 2px solid black" />
+        <label
+          ><input
+            id="connected-line"
+            class="shape"
+            type="checkbox"
+            value="connected"
+            onclick="selectOne(this)"
+          />이어진 선</label
+        >
+        <br />
+
+        <hr style="width: 80%; border: 2px dashed black" />
+        <label
+          ><input
+            id="straight-line"
+            class="shape"
+            type="checkbox"
+            value="straight"
+            onclick="selectOne(this)"
+          />직선 & 분리된 선</label
+        >
+        <br />
+        <hr style="width: 80%; border: 2px dotted black" />
+        <label
+          ><input
+            id="dotted-line"
+            class="shape"
+            type="checkbox"
+            value="dotted"
+            onclick="selectOne(this)"
+          />점선</label
+        >
+
+        <br />
+        <span>Triangle</span>
+        <label>
+          <input
+            id="triangle"
+            class="shape"
+            type="checkbox"
+            value="triangle"
+            onclick="selectOne(this)"
+          />
+          ▲
+        </label>
+
+        <br />
+        <span>Rectangle</span>
+        <label>
+          <input
+            id="rectangle"
+            class="shape"
+            type="checkbox"
+            value="rectangle"
+            onclick="selectOne(this)"
+          />
+          ▉
+        </label>
+
+        <br />
+        <span>캔버스 크기</span>
+        <select id="canvas-size" size="4">
+          <option value="0">400*400</option>
+          <option value="1">550*550</option>
+          <option value="2">700*700</option>
+          <option value="3">800*800</option>
+        </select>
+
+        <button id="eraseBtn">Erase</button>
+      </div>
+    </div>
+  </body>
+</html>
