@@ -1,10 +1,3 @@
-// graphics project 기능 개선 및 추가한 그림판 - project.js
-// 과목: 컴퓨터 그래픽스
-// 분반: 1분반
-// 학번: 32203928
-// 학과: 소프트웨어학과
-// 이름: 장현정
-
 let gl;
 const maxNumTriangles = 600;
 const maxNumVertices = 3 * maxNumTriangles;
